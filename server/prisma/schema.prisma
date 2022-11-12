@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  previewFeatures = ["referentialIntegrity"]
+}
+
+datasource db {
+  provider             = "mysql"
+  url                  = env("DATABASE_URL")
+  referentialIntegrity = "prisma"
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  displayName String
+  password    String
+  email       String
+  imageUrl    String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  ownedBoards Board[]   @relation("ownedBoards")
+  memeberOf   Board[]   @relation("memeberOf")
+  listOwned   List[]
+  comments    Comment[] @relation("ownedComments")
+}
+
+model Board {
+  id              Int      @id @default(autoincrement())
+  name            String
+  backgroundImage String?
+  owner           User     @relation("ownedBoards", fields: [ownerId], references: [id])
+  ownerId         Int
+  member          User?    @relation("memeberOf", fields: [memeberId], references: [id])
+  memeberId       Int?
+  lists           List[]
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model List {
+  id           Int      @id @default(autoincrement())
+  name         String
+  order        Int      @default(0)
+  archived     Boolean  @default(false)
+  ownerBoard   Board    @relation(fields: [ownerBoardId], references: [id])
+  ownerBoardId Int
+  owner        User     @relation(fields: [ownerId], references: [id])
+  ownerId      Int
+  cards        Card[]
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Card {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String?
+  order       Int      @default(0)
+  archived    Boolean  @default(false)
+  list        List     @relation(fields: [listId], references: [id])
+  listId      Int
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  content   String
+  owner     User     @relation("ownedComments", fields: [ownerId], references: [id])
+  ownerId   Int
+  // replies   Comment? @relation("replies")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  commentId Int?
+}
