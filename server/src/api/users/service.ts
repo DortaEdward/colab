@@ -31,8 +31,12 @@ export const signin = async (payload: SignInSchema["body"]) => {
     if (!validPassword) {
       throw new Error('Password does not match!')
     };
-    console.log('user?', user);
-    return;
+    const loggedInUser = {
+      id: user?.id as number,
+      displayName: user?.displayName as string,
+      imageUrl: user?.imageUrl as string,
+    }
+    return loggedInUser;
   } catch (error: any) {
     console.log(error.message);
     throw new Error(error.message);

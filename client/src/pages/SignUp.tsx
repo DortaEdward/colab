@@ -1,4 +1,5 @@
-import { createRef } from 'react'
+import { createRef } from 'react';
+import { Link } from 'react-router-dom';
 
 type Props = {}
 
@@ -12,7 +13,9 @@ const SignUp = () => {
   const handleSubmit = (e: {preventDefault: () => void}) => {
     e.preventDefault();
     const payload = {
+      // @ts-ignore
       email: emailRef.current.value as string,
+      // @ts-ignore
       password: passwordRef.current.value as string,
     }
     console.log(payload)
@@ -30,6 +33,15 @@ const SignUp = () => {
         <form
           className='flex flex-col gap-4'
           onSubmit={handleSubmit}>
+          <div className='flex flex-col gap-2'>
+            <label>Display Name</label>
+            <input
+              type="text"
+              placeholder='Enter a Display name'
+              className='p-2 border rounded border-gray-400'
+              ref={emailRef}
+            />
+          </div>
           <div className='flex flex-col gap-2'>
             <label>Email</label>
             <input
@@ -52,9 +64,9 @@ const SignUp = () => {
           <button
             type='submit'
             className='bg-blue-600 text-gray-50 font-semibold py-2 rounded cursor-pointer'>
-            Log In
+            Sign Up
           </button>
-          <p className='text-center'>Don't have an account? <span className='text-blue-600 font-semibold underline cursor-pointer'>Sign up</span></p>
+          <p className='text-center'>Have an account? <Link to='/' className='text-blue-600 font-semibold underline cursor-pointer'>Sign In</Link></p>
         </form>
       </div>
     </div>

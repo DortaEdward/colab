@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
 type Props = {}
@@ -9,25 +9,44 @@ type FormData = {
 }
 
 const Login = () => {
-
-  const handleSubmit = (e: {preventDefault: () => void}) => {
-    e.preventDefault();
-    const payload = {
-      email: emailRef.current.value as string,
-      password: passwordRef.current.value as string,
-    }
-    console.log(payload)
-  }
-
   const emailRef = createRef<HTMLInputElement>();
   const passwordRef = createRef<HTMLInputElement>();
+
+  const [error, setError] = useState('');
+
+  const handleSubmit = async (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    setError('');
+    const payload = {
+      // @ts-ignore
+      email: emailRef.current.value as string,
+      // @ts-ignore
+      password: passwordRef.current.value as string,
+    };
+
+    const res = await fetch('http://localhost:5502/api/v1/user/signin', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+    if(res.status !== 200) setError(data.error);
+    if(data.token) localStorage.setItem('token',data.token);
+    console.log(data);
+  }
 
   return (
     <div className='w-full h-full flex items-center justify-center'>
       <div className='bg-[#fefefe] w-[600px] h-[650px] flex flex-col items-center gap-4 justify-center rounded-lg'>
         <h1 className='text-3xl font-bold'>Welcome back</h1>
         <p className='text-gray-500'>Welcome back! Please enter your details.</p>
-        {/* <div className='bg-red-500 text-gray-50 px-4 py-1'>Invalid Email</div> */}
+        {
+          error 
+          ? <div className='bg-red-500 text-gray-50 px-4 py-1'>{error}</div>
+          :<></>
+        }
         <form
           className='flex flex-col gap-4'
           onSubmit={handleSubmit}>
@@ -62,4 +81,4 @@ const Login = () => {
   )
 }
 
-export default Login
+export default Login;

@@ -1,4 +1,2 @@
-# Colab_ Check list
-* [ ] User
-  * [ ] CRUD User
-* [ ] 
+# Left off
+  * [ ] when validating jwt, its malformed
